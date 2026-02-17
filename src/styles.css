@@ -1,0 +1,547 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.header {
+  width: 100%;
+}
+
+.header h1,
+.header p {
+  max-width: 100%;
+}
+
+.event-list {
+  display: grid;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.event-card {
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.3s ease, transform 0.2s ease;
+}
+
+.event-card h3 {
+  margin-top: 0;
+}
+
+.event-card:hover {
+  transform: translateY(-3px);
+}
+
+.event-card.favorite {
+  border-color: #2ecc71;
+}
+
+.search-input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  margin: 25px 0 24px 0;
+}
+
+.search-input:focus {
+  border-color: #ddd;
+}
+
+/* --- Form --- */
+.form-container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 32px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+form label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"] {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-top: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+fieldset {
+  border: none;
+  margin: 20px 0;
+}
+
+fieldset legend {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* --- Radio buttons styled as selectable buttons --- */
+.radio-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.radio-group input[type="radio"] {
+  display: none; 
+}
+
+.radio-group label {
+  cursor: pointer;
+}
+
+.radio-group label span {
+  background: #f5f5f5;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.radio-group label:hover span {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.radio-group input[type="radio"]:checked + span {
+  background: #666;
+  color: white;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  background: #444;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background: #333;
+}
+
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* --- Participants Page --- */
+.participants-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.participants-page h2 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.participants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.participant-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.participant-card:hover {
+  transform: scale(1.02);
+}
+
+.participant-card span {
+  font-size: 14px;
+  color: #555;
+  margin-top: 6px;
+}
+
+/* --- Event Card Buttons --- */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  width: 100%; 
+}
+
+.main-button {
+  width: 100%;
+  background: #444; 
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.main-button:hover {
+  background: #222;
+  transform: translateY(-2px);
+}
+
+.sub-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.link-button {
+  flex: 1;
+  background: #666;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.link-button:hover {
+  background: #333;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 16px;
+  }
+
+  .search-input {
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #444;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --- Тема для body --- */
+body.light {
+  background: #f5f5f5;   /* світлий фон */
+  color: #222;           /* темно-сірий текст */
+}
+
+body.dark {
+  background: #121212;   /* темний фон */
+  color: #ccc;           /* світло-сірий текст */
+}
+
+/* --- Контейнер застосунку --- */
+.app.light {
+  background: #f5f5f5;
+  color: #222;
+}
+
+.app.dark {
+  background: #121212;
+  color: #ccc;
+}
+
+/* --- Кнопка перемикання теми --- */
+.theme-button {
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.theme-button.light {
+  background: #f5f5f5;
+  color: #444;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.theme-button.dark {
+  background: #222;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* --- Пошукове поле у темній темі --- */
+.app.dark .search-input {
+  background: #2a2a2a;
+  color: #ccc;
+  border: 1px solid #555;
+  box-shadow: none;
+}
+
+.app.dark .search-input::placeholder {
+  color: #777;
+}
+
+/* --- Картки подій --- */
+.app.light .event-card {
+  background: #fff;
+  color: #000;
+}
+
+.app.dark .event-card {
+  background: #1e1e1e;
+  color: #eee;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* --- Картки учасників --- */
+.app.light .participant-card {
+  background: #fff;
+  color: #000;
+}
+
+.app.dark .participant-card {
+  background: #1e1e1e;
+  color: #eee;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* --- Кнопки у темній темі --- */
+.app.dark .main-button,
+.app.dark .link-button {
+  background: #333;
+  color: #ccc;
+}
+
+.app.dark .main-button:hover,
+.app.dark .link-button:hover {
+  background: #666;
+  color: #fff;
+}
+
+.app.light .form-container {
+  background: #fff;
+  color: #000;
+}
+
+.app.dark .form-container {
+  background: #1e1e1e;
+  color: #ccc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.app.dark input[type="text"],
+.app.dark input[type="email"],
+.app.dark input[type="date"] {
+  background: #2a2a2a;
+  color: #ccc;
+  border: 1px solid #555;
+  box-shadow: none;
+}
+
+.app.dark input[type="text"]::placeholder,
+.app.dark input[type="email"]::placeholder,
+.app.dark input[type="date"]::placeholder {
+  color: #777;
+}
+
+.app.dark .radio-group label span {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+.app.dark .radio-group label:hover span {
+  background: #444;
+  transform: translateY(-2px);
+}
+
+.app.dark .radio-group input[type="radio"]:checked + span {
+  background: #666;
+  color: #fff;
+}
+
+.app.dark .loader { 
+  border: 4px solid #333; 
+  border-top: 4px solid #ccc; 
+}
+
+.skeleton {
+  background: #e0e0e0;
+  border-radius: 6px;
+  margin: 8px 0;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.skeleton-title {
+  width: 60%;
+  height: 20px;
+}
+
+.skeleton-text {
+  width: 90%;
+  height: 14px;
+}
+
+.skeleton-button {
+  width: 40%;
+  height: 30px;
+  margin-top: 12px;
+}
+
+.app.dark .skeleton {
+  background: #333;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px; 
+  margin-top: 20px;
+}
+
+.back-button,
+.footer-button {
+  flex: 1;
+  text-align: center;
+  padding: 12px 24px;
+  background-color: #666;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-button:hover,
+.footer-button:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+}
+
+.app.dark .back-button,
+.app.dark .footer-button {
+  background: #333;
+  color: #ccc;
+}
+
+.app.dark .back-button:hover,
+.app.dark .footer-button:hover {
+  background: #666;
+  color: #fff;
+}
+
+.stats-container {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* базова тінь */
+}
+
+.light .stat-card {
+  background: #f8f9fa;
+  color: #212529;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dark .stat-card {
+  background: #2c2c2c;
+  color: #f1f1f1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.analytics-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
