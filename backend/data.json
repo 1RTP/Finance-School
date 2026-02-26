@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Фінанси для початківців",
+    "description": "Основи управління особистими фінансами",
+    "date": "2026-03-10",
+    "organizer": "Finance School"
+  },
+  {
+    "id": 2,
+    "title": "Інвестування без страху",
+    "description": "Як почати інвестувати з нуля",
+    "date": "2026-03-15",
+    "organizer": "Invest Lab"
+  },
+  {
+    "id": 3,
+    "title": "Пасивний дохід",
+    "description": "Створення джерел стабільного доходу",
+    "date": "2026-03-20",
+    "organizer": "Money Academy"
+  },
+  {
+    "id": 4,
+    "title": "Бюджет для сім'ї",
+    "description": "Як планувати витрати та заощадження",
+    "date": "2026-03-25",
+    "organizer": "Family Finance Center"
+  }
+]
