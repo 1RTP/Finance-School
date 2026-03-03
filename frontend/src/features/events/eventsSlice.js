@@ -5,7 +5,8 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
   if (!res.ok) {
     throw new Error("Не вдалося завантажити події");
   }
-  return await res.json();
+  const json = await res.json(); 
+  return json.data;
 });
 
 const eventsAdapter = createEntityAdapter({

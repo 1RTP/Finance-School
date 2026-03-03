@@ -1,38 +1,59 @@
-import http from "node:http";
+import express from "express";
 import { readFile } from "node:fs/promises";
-import { URL } from "node:url";
 import { PORT, DATA_FILE } from "./config.js";
+import cors from "cors";
 
-function sendJson(res, statusCode, payload) {
-  res.statusCode = statusCode;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify(payload));
-}
+const app = express();
+app.use(cors());
 
-const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
 
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+app.get("/api/events", async (req, res) => {
+  try {
+    const rawData = await readFile(DATA_FILE, "utf-8");
+    let events = JSON.parse(rawData);
 
-  console.log(`[${new Date().toISOString()}] ${req.method} ${url.pathname}`);
+    let { page = 1, limit = 5, sort = "date", order = "asc" } = req.query;
+    page = Number(page);
+    limit = Number(limit);
 
-  if (url.pathname === "/api/events" && req.method === "GET") {
-    try {
-      const data = await readFile(DATA_FILE, "utf-8");
-      sendJson(res, 200, JSON.parse(data));
-    } catch (err) {
-      sendJson(res, 500, { error: "Не вдалося прочитати файл" });
+    if (page < 1 || limit < 1) {
+      return res.status(400).json({ error: "page і limit повинні бути >= 1" });
     }
-  } else if (req.method === "OPTIONS") {
-    res.writeHead(204);
-    res.end();
-  } else {
-    sendJson(res, 404, { error: "Маршрут не знайдено" });
+
+    if (sort === "date") {
+      events.sort((a, b) =>
+        order === "asc"
+          ? a.date.localeCompare(b.date)
+          : b.date.localeCompare(a.date)
+      );
+    } else if (sort === "title") {
+      events.sort((a, b) =>
+        order === "asc"
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title)
+      );
+    }
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const paginatedEvents = events.slice(start, end);
+
+    res.json({
+      page,
+      limit,
+      total: events.length,
+      data: paginatedEvents,
+    });
+  } catch (err) {
+    console.error("Помилка читання файлу:", err);
+    res.status(500).json({ error: "Не вдалося прочитати файл" });
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Сервер запущено: http://localhost:${PORT}/api/events`);
+app.listen(PORT, () => {
+  console.log(`Express сервер запущено: http://localhost:${PORT}/api/events`);
 });
