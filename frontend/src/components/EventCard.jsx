@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { selectEventById, updateEvent } from "../features/events/eventsSlice";
 
-function EventCard({ id }) {
+function EventCard({ _id }) {
   const dispatch = useDispatch();
-  const event = useSelector((state) => selectEventById(state, id));
+  const event = useSelector((state) => selectEventById(state, _id));
 
   if (!event) return null;
 
   const { title, description, date, organizer, favorite } = event;
-  const handleFavorite = () => { dispatch(updateEvent({ id, changes: { favorite: !favorite } }));};
+
+  const handleFavorite = () => {
+    dispatch(updateEvent({ id: _id, changes: { favorite: !favorite } }));
+  };
 
   return (
     <div className={`event-card ${favorite ? "favorite" : ""}`}>
@@ -28,10 +31,10 @@ function EventCard({ id }) {
           {favorite ? "Видалити з цікавих" : "Цікаво"}
         </button>
         <div className="sub-actions">
-          <Link to={`/register/${id}`} className="link-button">
+          <Link to={`/register/${_id}`} className="link-button">
             Реєстрація
           </Link>
-          <Link to={`/participants/${id}`} className="link-button">
+          <Link to={`/participants/${_id}`} className="link-button">
             Учасники
           </Link>
         </div>

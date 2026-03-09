@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchParticipants, selectFilteredParticipants } from "../features/participants/participantsSlice";
+import { fetchParticipantsCursor, clearParticipants, selectFilteredParticipants, } from "../features/participants/participantsSlice";
 import Spinner from "../components/Spinner";
 
 function Participants() {
@@ -11,7 +11,37 @@ function Participants() {
   const participants = useSelector((state) => selectFilteredParticipants(state, searchTerm, eventId));
   const loading = useSelector((state) => state.participants.loading);
   const error = useSelector((state) => state.participants.error);
-  const handleLoad = () => { dispatch(fetchParticipants(eventId));};
+  const [hasMore, setHasMore] = useState(true);
+
+  const loadParticipants = () => {
+    if (loading || !hasMore) return;
+    const lastId = participants.length > 0 ? participants[participants.length - 1]._id : null;
+    dispatch(fetchParticipantsCursor({ eventId, lastId, limit: 5 }))
+      .unwrap()
+      .then((data) => {
+        if (data.length === 0) setHasMore(false);
+      })
+      .catch(() => setHasMore(false));
+  };
+
+  useEffect(() => {
+    dispatch(clearParticipants());
+    setHasMore(true);
+    loadParticipants();
+  }, [dispatch, eventId]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        loadParticipants();
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [participants, hasMore]);
 
   return (
     <div className="participants-page">
@@ -32,7 +62,7 @@ function Participants() {
       ) : (
         <div className="participants-grid">
           {participants.map((p) => (
-            <div key={p.id} className="participant-card">
+            <div key={p._id} className="participant-card">
               <strong>{p.fullName}</strong>
               <span>{p.email}</span>
             </div>
@@ -40,13 +70,12 @@ function Participants() {
         </div>
       )}
 
+      {!hasMore && <p>Більше учасників немає</p>}
+
       <div className="footer-row">
         <Link className="back-button" to="/">
           Повернутися до подій
         </Link>
-        <button onClick={handleLoad} className="footer-button">
-          Завантажити учасників
-        </button>
       </div>
     </div>
   );

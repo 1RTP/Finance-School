@@ -10,8 +10,8 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
 });
 
 const eventsAdapter = createEntityAdapter({
-  selectId: (event) => event.id,
-  sortComparer: (a, b) => a.date.localeCompare(b.date),
+  selectId: (event) => event._id,
+  sortComparer: (a, b) => new Date(a.date) - new Date(b.date),
 });
 
 const eventsSlice = createSlice({
