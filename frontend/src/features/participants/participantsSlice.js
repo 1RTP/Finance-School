@@ -7,7 +7,7 @@ const initialState = participantsAdapter.getInitialState({ loading: false, error
 export const fetchParticipants = createAsyncThunk(
   "participants/fetchParticipants",
   async (eventId) => {
-    const res = await fetch(`http://localhost:3000/api/participants/${eventId}`);
+    const res = await fetch(`http://localhost:3000/api/participants/${eventId}`, { credentials: "include" });
     if (!res.ok) throw new Error("Не вдалося завантажити учасників");
     return await res.json();
   }
@@ -20,7 +20,7 @@ export const fetchParticipantsCursor = createAsyncThunk(
     const url = lastId
       ? `http://localhost:3000/api/participants/cursor/${eventId}?lastId=${lastId}&limit=${limit}`
       : `http://localhost:3000/api/participants/cursor/${eventId}?limit=${limit}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { credentials: "include" });
     if (!res.ok) throw new Error("Не вдалося завантажити учасників");
     return await res.json();
   }
@@ -34,6 +34,7 @@ export const addParticipantAsync = createAsyncThunk(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(participant),
+      credentials: "include",
     });
     if (!res.ok) throw new Error("Не вдалося додати учасника");
     return await res.json();

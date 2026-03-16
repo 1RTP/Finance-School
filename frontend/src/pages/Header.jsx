@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/theme/themeSlice";
+import { Link } from "react-router-dom";
 
 function Header({ search, setSearch }) {
   const dispatch = useDispatch();
@@ -29,6 +30,15 @@ function Header({ search, setSearch }) {
         value={search}
         onChange={e => setSearch(e.target.value)}
       />
+
+      <div className="auth-buttons">
+        <Link to="/user-register" className="link-button">
+          Зареєструватися
+        </Link>
+        <Link to="/login" className="link-button">
+          Увійти
+        </Link>
+      </div>
     </header>
   );
 }

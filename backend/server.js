@@ -1,21 +1,33 @@
+import bcrypt from "bcrypt";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import session from "express-session";
 import { PORT } from "./config.js";
-import { Event, Participant } from "./models.js";
+import { Event, Participant, User } from "./models.js";
 
 mongoose.connect("mongodb://localhost:27019/finance-school")
 .then(() => console.log("MongoDB підключено"))
 .catch(err => console.error("Помилка MongoDB:", err));
 
 const app = express();
-app.use(cors());
 app.use(express.json());
 
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
+
+app.use(session({
+  secret: "keyromankey",
+  resave: false,
+  saveUninitialized: false,
+}));
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 app.get("/api/events", async (req, res) => {
   try {
@@ -46,12 +58,11 @@ app.get("/api/events", async (req, res) => {
   }
 });
 
-app.get("/api/participants/:eventId", async (req, res) => {
+app.get("/api/participants/:eventId", requireAuth, async (req, res) => {
   try {
     const participants = await Participant.find({ eventId: req.params.eventId });
     res.json(participants);
   } catch (err) {
-    console.error("Помилка отримання учасників:", err);
     res.status(500).json({ error: "Не вдалося отримати учасників" });
   }
 });
@@ -92,7 +103,7 @@ app.get("/api/events/cursor", async (req, res) => {
   }
 });
 
-app.get("/api/participants/cursor/:eventId", async (req, res) => {
+app.get("/api/participants/cursor/:eventId", requireAuth, async (req, res) => {
   try {
     let { lastId, limit = 5 } = req.query;
     limit = Number(limit);
@@ -108,9 +119,54 @@ app.get("/api/participants/cursor/:eventId", async (req, res) => {
 
     res.json(participants);
   } catch (err) {
-    console.error("Помилка cursor-пагінації учасників:", err);
     res.status(500).json({ error: "Не вдалося отримати учасників" });
   }
 });
 
+
+app.post("/api/register", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ username, password: hashedPassword });
+    await user.save();
+    res.json({ message: "Користувач зареєстрований!" });
+  } catch (err) {
+    res.status(400).json({ error: "Помилка при реєстрації" });
+  }
+});
+
+app.post("/api/login", async (req, res) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+  if (!user) return res.status(400).json({ error: "Неправильний логін" });
+
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.status(400).json({ error: "Неправильний пароль" });
+
+  req.session.userId = user._id;
+  req.session.role = user.role;
+  res.json({ message: "Успішний логін!" });
+});
+
+function requireAuth(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Необхідна авторизація" });
+  }
+  next();
+}
+
+function requireRole(role) {
+  return (req, res, next) => {
+    if (!req.session.role || req.session.role !== role) {
+      return res.status(403).json({ error: "Доступ заборонено" });
+    }
+    next();
+  };
+}
+
+app.delete("/api/events/:id", requireRole("Admin"), async (req, res) => {
+  await Event.findByIdAndDelete(req.params.id);
+  res.json({ message: "Подію видалено" });
+});
 

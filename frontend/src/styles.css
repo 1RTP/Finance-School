@@ -93,7 +93,8 @@ form label {
 
 input[type="text"],
 input[type="email"],
-input[type="date"] {
+input[type="date"],
+input[type="password"] {
   padding: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -406,7 +407,8 @@ body.dark {
 
 .app.dark input[type="text"],
 .app.dark input[type="email"],
-.app.dark input[type="date"] {
+.app.dark input[type="date"],
+.app.dark input[type="password"] {
   background: #2a2a2a;
   color: #ccc;
   border: 1px solid #555;
@@ -415,6 +417,7 @@ body.dark {
 
 .app.dark input[type="text"]::placeholder,
 .app.dark input[type="email"]::placeholder,
+.app.dark input[type="password"]::placeholder,
 .app.dark input[type="date"]::placeholder {
   color: #777;
 }
@@ -543,5 +546,11 @@ body.dark {
 .analytics-title {
   text-align: center;
   margin-bottom: 20px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 

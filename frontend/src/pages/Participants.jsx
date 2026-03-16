@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchParticipantsCursor, clearParticipants, selectFilteredParticipants, } from "../features/participants/participantsSlice";
+import { fetchParticipantsCursor, clearParticipants, selectFilteredParticipants, addFakeParticipants,} from "../features/participants/participantsSlice";
 import Spinner from "../components/Spinner";
 
 function Participants() {
@@ -43,6 +43,10 @@ function Participants() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [participants, hasMore]);
 
+  const handleAddFake = () => {
+    dispatch(addFakeParticipants(eventId));
+  };
+
   return (
     <div className="participants-page">
       <h2>Учасники події</h2>
@@ -76,6 +80,9 @@ function Participants() {
         <Link className="back-button" to="/">
           Повернутися до подій
         </Link>
+        <button className="back-button" onClick={handleAddFake}>
+          Додати тестових учасників
+        </button>
       </div>
     </div>
   );
