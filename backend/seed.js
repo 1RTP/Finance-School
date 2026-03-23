@@ -33,11 +33,16 @@
 
 
 import mongoose from "mongoose";
-import { Event } from "./models.js";
+import { Event, User } from "./models.js";
 
 async function seed() {
   await mongoose.connect("mongodb://localhost:27019/finance-school");
+
   await Event.deleteMany({});
+  let user = await User.findOne();
+  if (!user) {
+    user = await User.create({ username: "TestUser", password: "123456789", role: "User", email: "testuser@example.com" });
+  }
 
   const events = [];
   for (let i = 1; i <= 50; i++) {
@@ -45,6 +50,7 @@ async function seed() {
       title: `Подія №${i}`,
       date: new Date(2026, 0, i),
       description: `Опис події №${i}`,
+      creator: user._id,
     });
   }
 

@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import session from "express-session";
+import { initGraphQL } from "./graphql.js";
 import { PORT } from "./config.js";
 import { Event, Participant, User } from "./models.js";
 
@@ -28,6 +29,8 @@ app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
 }));
+
+await initGraphQL(app);
 
 app.get("/api/events", async (req, res) => {
   try {
@@ -169,4 +172,79 @@ app.delete("/api/events/:id", requireRole("Admin"), async (req, res) => {
   await Event.findByIdAndDelete(req.params.id);
   res.json({ message: "Подію видалено" });
 });
+
+app.post("/api/events", requireAuth, async (req, res) => {
+  try {
+    const { title, date, description } = req.body;
+    const event = new Event({
+      title,
+      date,
+      description,
+      creator: req.session.userId
+    });
+    await event.save();
+    res.status(201).json(event);
+  } catch (err) {
+    res.status(500).json({ error: "Не вдалося створити подію" });
+  }
+});
+
+app.put("/api/events/:id", requireAuth, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ error: "Подію не знайдено" });
+
+    if (event.creator.toString() !== req.session.userId) {
+      return res.status(403).json({ error: "Ви можете редагувати тільки свої події" });
+    }
+
+    Object.assign(event, req.body);
+    await event.save();
+    res.json(event);
+  } catch (err) {
+    res.status(500).json({ error: "Не вдалося оновити подію" });
+  }
+});
+
+app.delete("/api/events/:id", requireAuth, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ error: "Подію не знайдено" });
+
+    if (req.session.role !== "Admin" && event.creator.toString() !== req.session.userId) {
+      return res.status(403).json({ error: "Ви можете видаляти тільки свої події" });
+    }
+
+    await event.deleteOne();
+    res.json({ message: "Подію видалено" });
+  } catch (err) {
+    res.status(500).json({ error: "Не вдалося видалити подію" });
+  }
+});
+
+app.post("/api/participants", requireAuth, async (req, res) => {
+  try {
+    const { eventId } = req.body;
+
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ error: "Користувача не знайдено" });
+    }
+
+    const participant = new Participant({
+      fullName: user.username,
+      email: user.email,
+      eventId,
+      createdAt: new Date()
+    });
+
+    await participant.save();
+    res.status(201).json(participant);
+  } catch (err) {
+    console.error("Помилка додавання учасника:", err);
+    res.status(500).json({ error: "Не вдалося зареєструватися на подію" });
+  }
+});
+
+
 
