@@ -38,6 +38,12 @@ function Header({ search, setSearch }) {
         <Link to="/login" className="link-button">
           Увійти
         </Link>
+        <Link to="/stats" className="link-button">
+          Переглянути графік реєстрацій
+        </Link>
+        <Link to="/chat" className="link-button">
+          Відкрити чат підтримки
+        </Link>
       </div>
     </header>
   );

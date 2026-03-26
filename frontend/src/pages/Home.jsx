@@ -1,32 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import Header from "./Header";
-import EventList from "./EventList";
-import { fetchEvents } from "../features/events/eventsSlice";
-import { makeSelectFilteredEvents } from "../features/events/eventsSelectors";
+import EventsList from "../components/EventsList";
 import SkeletonEventCard from "../components/SkeletonEventCard";
 
 function Home() {
-  const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  const selectFilteredEvents = makeSelectFilteredEvents();
-  
-  const filteredEvents = useSelector((state) =>
-    selectFilteredEvents(state, search)
-  );
 
   const loading = useSelector((state) => state.events.loading);
   const error = useSelector((state) => state.events.error);
-
-  useEffect(() => {
-    dispatch(fetchEvents());
-  }, [dispatch]);
+  const hasEvents = useSelector((state) => state.events.ids.length > 0);
 
   return (
     <div className="home">
       <Header search={search} setSearch={setSearch} />
 
-      {loading && (
+      {loading && !hasEvents && (
         <div className="event-list">
           <SkeletonEventCard />
           <SkeletonEventCard />
@@ -36,7 +25,7 @@ function Home() {
 
       {error && <p className="error">{error}</p>}
 
-      {!loading && !error && <EventList events={filteredEvents} />}
+      <EventsList search={search} />
     </div>
   );
 }

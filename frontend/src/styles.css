@@ -252,6 +252,10 @@ button[type="submit"]:hover {
   padding: 10px 14px;
   text-align: center;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  line-height: 1; 
   font-size: 14px;
   transition: background 0.2s ease, transform 0.2s ease;
 }
@@ -528,7 +532,7 @@ body.dark {
   border-radius: 8px;
   text-align: center;
   transition: background 0.3s, color 0.3s, box-shadow 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* базова тінь */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .light .stat-card {
@@ -552,5 +556,101 @@ body.dark {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+}
+
+.chat-messages {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  background: #f9f9f9;
+  color: #000;
+}
+
+body.dark .chat-messages {
+  background: #2a2a2a;
+  border: 1px solid #555;
+  color: #ccc;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.chat-input input[type="text"] {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  background: #fff;
+  color: #000;
+}
+
+body.dark .chat-input input[type="text"] {
+  background: #2a2a2a;
+  color: #ccc;
+  border: 1px solid #555;
+}
+
+.chat-input button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #444;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.chat-input button:hover {
+  background: #222;
+}
+
+body.dark .chat-input button {
+  background: #333;
+  color: #ccc;
+}
+
+body.dark .chat-input button:hover {
+  background: #666;
+  color: #fff;
+}
+
+.chat-message {
+  max-width: 70%;
+  padding: 10px 14px;
+  margin: 6px 0;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.chat-message.sent {
+  background: #444;
+  color: #fff;
+  margin-left: auto;
+}
+
+.chat-message.received {
+  background: #e0e0e0;
+  color: #000;
+  margin-right: auto;
+}
+
+body.dark .chat-message.sent {
+  background: #333;
+  color: #ccc;
+}
+
+body.dark .chat-message.received {
+  background: #2a2a2a;
+  color: #eee;
 }
 

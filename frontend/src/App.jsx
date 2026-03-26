@@ -8,6 +8,8 @@ import Participants from "./pages/Participants";
 import Analytics from "./pages/Analytics";
 import UserRegister from "./pages/UserRegister";
 import Login from "./pages/Login";
+import Stats from "./pages/Stats";
+import Chat from "./pages/Chat";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -29,6 +31,8 @@ function App() {
           <Route path="/analytics-json" element={<Analytics source="json" />} />
           <Route path="/user-register" element={<UserRegister />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/stats" element={<Stats />} />
+          <Route path="/chat" element={<Chat />} />
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
       </div>

@@ -5,9 +5,27 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
   if (!res.ok) {
     throw new Error("Не вдалося завантажити події");
   }
-  const json = await res.json(); 
+  const json = await res.json();
   return json.data;
 });
+
+export const fetchEventsCursor = createAsyncThunk(
+  "events/fetchEventsCursor",
+  async ({ lastId, limit = 5 }) => {
+    const params = new URLSearchParams();
+    params.append("limit", limit);
+    if (lastId) {
+      params.append("lastId", lastId);
+    }
+
+    const res = await fetch(`http://localhost:3000/api/events/cursor?${params.toString()}`);
+    if (!res.ok) {
+      throw new Error("Не вдалося завантажити події (cursor)");
+    }
+    const json = await res.json();
+    return json;
+  }
+);
 
 const eventsAdapter = createEntityAdapter({
   selectId: (event) => event._id,
@@ -38,6 +56,19 @@ const eventsSlice = createSlice({
         eventsAdapter.setAll(state, action.payload);
       })
       .addCase(fetchEvents.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      .addCase(fetchEventsCursor.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEventsCursor.fulfilled, (state, action) => {
+        state.loading = false;
+        eventsAdapter.addMany(state, action.payload);
+      })
+      .addCase(fetchEventsCursor.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
