@@ -4,10 +4,12 @@ import { toast } from "react-toastify";
 const participantsAdapter = createEntityAdapter({ selectId: (participant) => participant._id,});
 const initialState = participantsAdapter.getInitialState({ loading: false, error: null, });
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const fetchParticipants = createAsyncThunk(
   "participants/fetchParticipants",
   async (eventId) => {
-    const res = await fetch(`http://localhost:3000/api/participants/${eventId}`, { credentials: "include" });
+    const res = await fetch(`${API_URL}/api/participants/${eventId}`, { credentials: "include" });
     if (!res.ok) throw new Error("Не вдалося завантажити учасників");
     return await res.json();
   }
@@ -18,8 +20,8 @@ export const fetchParticipantsCursor = createAsyncThunk(
   "participants/fetchParticipantsCursor",
   async ({ eventId, lastId, limit = 5 }) => {
     const url = lastId
-      ? `http://localhost:3000/api/participants/cursor/${eventId}?lastId=${lastId}&limit=${limit}`
-      : `http://localhost:3000/api/participants/cursor/${eventId}?limit=${limit}`;
+      ? `${API_URL}/api/participants/cursor/${eventId}?lastId=${lastId}&limit=${limit}`
+      : `${API_URL}/api/participants/cursor/${eventId}?limit=${limit}`;
     const res = await fetch(url, { credentials: "include" });
     if (!res.ok) throw new Error("Не вдалося завантажити учасників");
     return await res.json();
@@ -30,7 +32,7 @@ export const fetchParticipantsCursor = createAsyncThunk(
 export const addParticipantAsync = createAsyncThunk(
   "participants/addParticipantAsync",
   async (participant) => {
-    const res = await fetch("http://localhost:3000/api/participants", {
+    const res = await fetch(`${API_URL}/api/participants`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(participant),

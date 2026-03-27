@@ -5,7 +5,8 @@ function Stats() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/stats/participants", { credentials: "include" })
+    const API_URL = import.meta.env.VITE_API_URL;
+    fetch(`${API_URL}/api/stats/participants`, { credentials: "include" })
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setData(data) : setData([]));
   }, []);

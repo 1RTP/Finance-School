@@ -4,22 +4,52 @@ import cors from "cors";
 import mongoose from "mongoose";
 import session from "express-session";
 import http from "http";
+import dotenv from "dotenv";
 import { initGraphQL } from "./graphql.js";
-import { PORT } from "./config.js";
 import { Event, Participant, User } from "./models.js";
 import { Server } from "socket.io";
 
-mongoose.connect("mongodb://localhost:27019/finance-school")
-.then(() => console.log("MongoDB підключено"))
-.catch(err => console.error("Помилка MongoDB:", err));
+dotenv.config();
+
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("MongoDB підключено"))
+  .catch(err => console.error("Помилка MongoDB:", err));
 
 const app = express();
 app.use(express.json());
+
+app.use(session({
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}));
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://finance-school-one.vercel.app"
+  ],
+  credentials: true
+}));
+
+
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://finance-school-one.vercel.app"
+    ],
     credentials: true
   }
 });
@@ -36,27 +66,11 @@ io.on("connection", (socket) => {
   });
 });
 
+await initGraphQL(app);
+
 server.listen(PORT, () => {
   console.log(`Сервер запущено: http://localhost:${PORT}`);
 });
-
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
-
-app.use(session({
-  secret: "keyromankey",
-  resave: false,
-  saveUninitialized: false,
-}));
-
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
-
-await initGraphQL(app);
 
 app.post("/api/register", async (req, res) => {
   try {

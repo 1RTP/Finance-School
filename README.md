@@ -1,118 +1,247 @@
 # Finance School
 
 ## Опис
-**Finance School** — це веб‑застосунок на базі **React + Redux Toolkit** з архітектурою **SPA (Single Page Application)**, який містить кілька маршрутів (сторінок) та дозволяє:
+**Finance School** — це веб-застосунок для управління подіями та учасниками, побудований на **React + Redux Toolkit (фронтенд)** та **Node.js + Express + MongoDB (бекенд)**.
 
-- Реєструвати учасників подій та переглядати їх список.
-- Візуалізувати кількість реєстрацій за днями у вигляді графіка.
-- Працювати з двома джерелами даних для аналітики:
-  - **Тестові дані** (зашиті у `analyticsSlice.js`)
-  - **JSON‑файл** (`public/analytics.json`)
-- Використовувати адаптивний дизайн та перемикання теми (**light/dark**) на головному рівні.
+### Функціонал
+- Реєстрація та авторизація користувачів
+- Створення, редагування та видалення подій
+- Реєстрація учасників на події
+- Перегляд списку учасників та статистики реєстрацій
+- Візуалізація даних у вигляді графіків (Recharts)
+- Чат у реальному часі (Socket.IO)
+- Адаптивний дизайн
+- Перемикання теми (light/dark)
 
 ---
 
-## Запуск проєкту
+# Запуск проєкту
 
-### 1. Клонування репозиторію
+## 1. Клонування репозиторію
 
 ```bash
 git clone <url>
-cd <project-folder>
+cd Finance-School
 ```
 
-### 2. Встановлення залежностей
+## 2. Встановлення залежностей
+
+### Фронтенд
 
 ```bash
+cd frontend
 npm install
 ```
 
-### 3. Запуск у режимі розробки
+### Бекенд
+
+```bash
+cd backend
+npm install
+```
+
+---
+
+## 3. Налаштування .env файлів
+
+### Backend (backend/.env)
+
+```env
+PORT=3000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/finance-school?retryWrites=true&w=majority
+SESSION_SECRET=yourSecretKey
+```
+
+### Frontend (frontend/.env)
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+На продакшн (Vercel + Render) треба змінити:
+
+```env
+VITE_API_URL=https://finance-school.onrender.com
+```
+
+---
+
+## 4. Запуск у режимі розробки
+
+### Фронтенд
 
 ```bash
 npm run dev
 ```
 
-Проєкт буде доступний за адресою:
-
-```
+Доступно за адресою:  
 http://localhost:5173
+
+### Бекенд
+
+```bash
+npm run dev
 ```
 
-### 4. Збірка для продакшн
+Доступно за адресою:  
+http://localhost:3000
+
+---
+
+## 5. Збірка для продакшн
+
+### Фронтенд
 
 ```bash
 npm run build
-```
-
-### 5. Попередній перегляд зібраної версії
-
-```bash
 npm run preview
 ```
 
 ---
 
-## Структура проєкту
+# Структура проєкту
 
 ```bash
-project/
-├── public/
-│   └── analytics.json
-├── src/
-│   ├── features/
-│   │   ├── analytics/
-│   │   └── participants/
-│   ├── pages/
-│   │   ├── Home.jsx
-│   │   ├── Register.jsx
-│   │   ├── Participants.jsx
-│   │   └── Analytics.jsx
-│   ├── App.jsx
-│   ├── index.css
-│   ├── index.jsx
-│   ├── store.jsx
-│   └── styles.css
+Finance-School/
+├── backend/
+│   ├── server.js
+│   ├── models.js
+│   ├── graphql.js
+│   └── .env
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── EventCard.jsx
+│   │   │   ├── EventsList.jsx
+│   │   │   ├── SkeletonEventCard.jsx
+│   │   │   └── Spinner.jsx
+│   │   ├── features/
+│   │   │   ├── analytics/
+│   │   │   │   └── analyticsSlice.js
+│   │   │   ├── events/
+│   │   │   │   ├── eventsSelectors.js
+│   │   │   │   └── eventsSlice.js
+│   │   │   ├── participants/
+│   │   │   │   └── articipantsSlice.js
+│   │   │   └── theme/
+│   │   │       └── themeSlice.js
+│   │   ├── pages/
+│   │   │   ├── Analytics.jsx
+│   │   │   ├── Chat.jsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Participants.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Stats.jsx
+│   │   │   └── UserRegister.jsx
+│   │   ├── App.jsx
+│   │   ├── store.jsx
+│   │   └── styles.css
+│   └── .env
 ```
 
 ---
 
-## Аналітика
+# API ендпоінти (бекенд)
 
-### Маршрути
+## Аутентифікація
 
-- `/analytics` — використовує тестові дані з `analyticsSlice.js`
-- `/analytics-json` — використовує дані з JSON-файлу (`public/analytics.json`)
+- POST /api/register — реєстрація користувача
+- POST /api/login — логін користувача
 
-### Формат JSON
+## Події
 
-```json
-[
-  { "date": "2026-02-10", "registrations": 5 },
-  { "date": "2026-02-11", "registrations": 8 },
-  { "date": "2026-02-12", "registrations": 2 },
-  { "date": "2026-02-13", "registrations": 10 }
-]
-```
+- GET /api/events — список подій (з пагінацією)
+- GET /api/events/cursor — cursor pagination
+- POST /api/events — створення події
+- PUT /api/events/:id — редагування події
+- DELETE /api/events/:id — видалення події
 
----
+## Учасники
+
+- GET /api/participants/:eventId — список учасників
+- GET /api/participants/cursor/:eventId — cursor pagination
+- POST /api/participants — додати учасника
+- PUT /api/participants/:id — редагувати
+- DELETE /api/participants/:id — видалити
 
 ## Статистика
 
-Застосунок автоматично обчислює:
-
-- Загальну кількість реєстрацій
-- Середню кількість реєстрацій
-- Максимальну кідбкість реєстрацій
-- Мінімальну кідбкість реєстрацій
+- GET /api/stats/participants — кількість реєстрацій по датах
 
 ---
 
-## 🛠 Використані технології
+# Використані технології
 
-- **React**
-- **Redux Toolkit**
-- **React Router**
-- **Recharts**
-- **React Toastify**
-- **CSS (light/dark theme)**
+## Frontend
+- React
+- Redux Toolkit
+- React Router
+- Recharts
+- React Toastify
+- Socket.IO Client
+- Vite
+
+## Backend
+- Node.js
+- Express
+- MongoDB (Mongoose)
+- GraphQL
+- Socket.IO
+- Express-Session
+- dotenv
+
+---
+
+# Приклади запитів (Postman)
+
+## Реєстрація
+
+```http
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+  "username": "TestUser",
+  "password": "123456"
+}
+```
+
+## Логін
+
+```http
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{
+  "username": "TestUser",
+  "password": "123456"
+}
+```
+
+## Отримати події
+
+```http
+GET http://localhost:3000/api/events?page=1&limit=5
+```
+
+## Додати учасника
+
+```http
+POST http://localhost:3000/api/participants
+Content-Type: application/json
+
+{
+  "eventId": "65f123abc..."
+}
+```
+
+---
+
+# Примітки
+
+- MongoDB має бути запущена
+- .env файли не додаються в Git
+- Backend деплоїться на Render
+- Frontend деплоїться на Vercel

@@ -1,7 +1,9 @@
 import { createSlice, createEntityAdapter, createAsyncThunk } from "@reduxjs/toolkit";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
-  const res = await fetch("http://localhost:3000/api/events");
+  const res = await fetch(`${API_URL}/api/events`);
   if (!res.ok) {
     throw new Error("Не вдалося завантажити події");
   }
@@ -18,7 +20,7 @@ export const fetchEventsCursor = createAsyncThunk(
       params.append("lastId", lastId);
     }
 
-    const res = await fetch(`http://localhost:3000/api/events/cursor?${params.toString()}`);
+    const res = await fetch(`${API_URL}/api/events/cursor?${params.toString()}`);
     if (!res.ok) {
       throw new Error("Не вдалося завантажити події (cursor)");
     }
