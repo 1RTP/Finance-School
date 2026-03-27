@@ -6,16 +6,6 @@ const initialState = participantsAdapter.getInitialState({ loading: false, error
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchParticipants = createAsyncThunk(
-  "participants/fetchParticipants",
-  async (eventId) => {
-    const res = await fetch(`${API_URL}/api/participants/${eventId}`, { credentials: "include" });
-    if (!res.ok) throw new Error("Не вдалося завантажити учасників");
-    return await res.json();
-  }
-);
-
-// cursor
 export const fetchParticipantsCursor = createAsyncThunk(
   "participants/fetchParticipantsCursor",
   async ({ eventId, lastId, limit = 5 }) => {
@@ -27,7 +17,6 @@ export const fetchParticipantsCursor = createAsyncThunk(
     return await res.json();
   }
 );
-// cursor
 
 export const addParticipantAsync = createAsyncThunk(
   "participants/addParticipantAsync",
@@ -72,21 +61,6 @@ const participantsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchParticipants.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchParticipants.fulfilled, (state, action) => {
-        state.loading = false;
-        participantsAdapter.setAll(state, action.payload);
-      })
-      .addCase(fetchParticipants.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-        toast.error("Помилка при завантаженні учасників!", { toastId: "loadError" });
-      })
-
-      // cursor
       .addCase(fetchParticipantsCursor.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -100,8 +74,7 @@ const participantsSlice = createSlice({
         state.error = action.error.message;
         toast.error("Помилка при завантаженні учасників (cursor)!", { toastId: "cursorError" });
       })
-      // cursor
-      
+
       .addCase(addParticipantAsync.fulfilled, (state, action) => {
         participantsAdapter.addOne(state, action.payload);
         if (action.payload.source) {
